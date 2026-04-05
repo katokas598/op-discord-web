@@ -42,9 +42,6 @@ def refresh_bot_commands():
     database.init_db()
 
 
-CMD_PREFIX = load_config().get('prefix', '!') if os.path.exists(CONFIG_PATH) else '!'
-
-
 def load_config():
     if os.path.exists(CONFIG_PATH):
         with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
