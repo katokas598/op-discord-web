@@ -12,6 +12,8 @@ import discord
 BASE_DIR = os.path.dirname(__file__)
 CONFIG_PATH = os.path.join(BASE_DIR, 'config.json')
 DB_PATH = os.path.join(BASE_DIR, 'bot.db')
+DEFAULT_HOST = os.environ.get('DASHBOARD_HOST', '0.0.0.0')
+DEFAULT_PORT = int(os.environ.get('DASHBOARD_PORT', '8000'))
 CMD_PREFIX = '!'
 
 
@@ -61,6 +63,13 @@ def load_config():
 def save_config(config):
     with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
+
+
+def dashboard_host_port():
+    config = load_config()
+    host = config.get('dashboard_host') or DEFAULT_HOST
+    port = int(config.get('dashboard_port') or DEFAULT_PORT)
+    return host, port
 
 
 def db_query(query, params=()):
@@ -823,6 +832,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir(BASE_DIR)
-    server = ThreadingHTTPServer(('0.0.0.0', 8000), Handler)
-    print('Dashboard running on http://localhost:8000')
+    host, port = dashboard_host_port()
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f'Dashboard running on http://{host}:{port}')
     server.serve_forever()

@@ -19,6 +19,8 @@ def load_config():
         "ticket_categories": ["Техподдержка", "Жалобы", "Предложения", "Другое"],
         "ticket_roles": [],
         "max_warns": 3,
+        "dashboard_host": "0.0.0.0",
+        "dashboard_port": 8000,
     }
 
 
