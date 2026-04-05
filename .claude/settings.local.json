@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone:*)",
+      "Bash(git -C \"F:/op-discord-web\" add .gitignore README.md bot_state.py config.py dashboard_server.py database.py discord_bot index.html main.py requirements.txt script.js setup.py styles.css telegram_bot web_setup.py)",
+      "Bash(git -C \"F:/op-discord-web\" status --short)",
+      "Bash(git:*)"
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DiscordSer Bot — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <header class="dash-topbar glass">
+    <div class="brand">
+      <div class="brand-mark">DS</div>
+      <div>
+        <div class="brand-title">DiscordSer Admin</div>
+        <div class="brand-subtitle">Панель управления ботом</div>
+      </div>
+    </div>
+    <nav class="dash-nav">
+      <button data-view="setup" class="nav-btn active">Настройка</button>
+      <button data-view="members" class="nav-btn">Пользователи</button>
+      <button data-view="tickets" class="nav-btn">Тикеты</button>
+      <button data-view="logs" class="nav-btn">Логи</button>
+      <button data-view="commands" class="nav-btn">Команды</button>
+      <button data-view="settings" class="nav-btn">Настройки</button>
+    </nav>
+  </header>
+
+  <main class="dash-shell">
+    <section class="hero-card glass reveal">
+      <div class="pill">Главная панель</div>
+      <h1>Все инструменты админа в одном месте</h1>
+      <p>Работа с пользователями, тикетами, логами, настройками и кастомными командами без заглушек.</p>
+    </section>
+
+    <section id="setup" class="panel-view active reveal">
+      <div class="section-head"><h2>Быстрая настройка</h2><p>Параметры бота и сервера.</p></div>
+      <form class="glass admin-form" id="config-form">
+        <div class="form-grid">
+          <label><span>Токен бота</span><input name="discord_token" type="password" placeholder="Токен" /></label>
+          <label><span>Префикс</span><input name="prefix" type="text" value="!" /></label>
+          <label><span>ID сервера</span><input name="guild_id" type="text" placeholder="Guild ID" /></label>
+          <label><span>Max warns</span><input name="max_warns" type="number" value="3" /></label>
+          <label class="full"><span>ID админов</span><input name="admin_ids" type="text" placeholder="111, 222" /></label>
+          <label class="full"><span>ID ролей тикетов</span><input name="ticket_roles" type="text" placeholder="444, 555" /></label>
+          <label class="full"><span>Категории тикетов</span><input name="ticket_categories" type="text" value="Техподдержка, Жалобы, Предложения, Другое" /></label>
+        </div>
+        <div class="hero-actions"><button class="btn btn-primary" type="submit">Сохранить</button></div>
+        <p class="form-note" id="status">Сохрани настройки и продолжай управлять ботом.</p>
+      </form>
+    </section>
+
+    <section id="members" class="panel-view reveal">
+      <div class="section-head"><h2>Пользователи сервера</h2><p>Список участников и быстрые действия.</p></div>
+      <div id="members-list" class="grid-cards"></div>
+    </section>
+
+    <section id="tickets" class="panel-view reveal">
+      <div class="section-head"><h2>Тикеты и жалобы</h2><p>Очередь обращений и ответы админов.</p></div>
+      <div id="tickets-list" class="grid-cards"></div>
+    </section>
+
+    <section id="logs" class="panel-view reveal">
+      <div class="section-head"><h2>Логи модерации</h2><p>Последние действия бота и админов.</p></div>
+      <div id="logs-list" class="grid-cards"></div>
+    </section>
+
+    <section id="commands" class="panel-view reveal">
+      <div class="section-head"><h2>Кастомные команды</h2><p>Создание и редактирование ответов.</p></div>
+      <form class="glass admin-form compact" id="command-form">
+        <div class="form-grid">
+          <label><span>Название</span><input name="name" type="text" placeholder="rules" /></label>
+          <label class="full"><span>Ответ</span><input name="response" type="text" placeholder="Текст ответа" /></label>
+        </div>
+        <div class="hero-actions"><button class="btn btn-primary" type="submit">Добавить команду</button></div>
+      </form>
+      <div id="commands-list" class="grid-cards"></div>
+    </section>
+
+    <section id="settings" class="panel-view reveal">
+      <div class="section-head"><h2>Настройки бота</h2><p>Префикс, лимиты и прочие параметры.</p></div>
+      <div class="glass settings-box">
+        <div id="settings-view"></div>
+        <button class="btn btn-secondary" id="refresh-all" type="button">Обновить данные</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
