@@ -23,3 +23,9 @@ GUILD_ID = CONFIG.get("guild_id", "")
 TICKET_CATEGORIES = CONFIG.get(
     "ticket_categories", ["Техподдержка", "Жалобы", "Предложения", "Другое"]
 )
+DASHBOARD_DOMAIN = CONFIG.get("dashboard_domain", "")
+DASHBOARD_LOGIN_URL = CONFIG.get("dashboard_login_url", "")
+DASHBOARD_HOST = CONFIG.get("dashboard_host", "0.0.0.0")
+DASHBOARD_PORT = CONFIG.get("dashboard_port", 8000)
+DASHBOARD_BASE_URL = DASHBOARD_LOGIN_URL or (f"https://{DASHBOARD_DOMAIN}" if DASHBOARD_DOMAIN else "")
+

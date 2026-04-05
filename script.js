@@ -60,6 +60,7 @@ const loadDashboard = async () => {
         <div class="stat-card glass"><span>Prefix</span><strong>${cfg.prefix || '!'}</strong></div>
         <div class="stat-card glass"><span>Max warns</span><strong>${cfg.max_warns || 3}</strong></div>
         <div class="stat-card glass"><span>Server ID</span><strong>${cfg.guild_id || '—'}</strong></div>
+        <div class="stat-card glass"><span>Domain</span><strong>${cfg.dashboard_domain || '—'}</strong></div>
       </div>
     `;
   }

@@ -28,7 +28,13 @@ def setup():
     print("\n4. ID Discord сервера (для тикетов):")
     config["guild_id"] = input("   ID сервера: ").strip()
 
-    print("\n5. Категории тикетов (через запятую):")
+    print("\n5. Домен сайта:")
+    config["dashboard_domain"] = input("   Домен (например example.com): ").strip()
+    config["dashboard_login_url"] = (
+        f'https://{config["dashboard_domain"]}' if config["dashboard_domain"] else ""
+    )
+
+    print("\n6. Категории тикетов (через запятую):")
     default_categories = "Техподдержка,Жалобы,Предложения,Другое"
     categories_input = input(f"   ({default_categories}): ").strip()
     config["ticket_categories"] = (

@@ -19,6 +19,8 @@ def load_config():
         "ticket_categories": ["Техподдержка", "Жалобы", "Предложения", "Другое"],
         "ticket_roles": [],
         "max_warns": 3,
+        "dashboard_domain": "",
+        "dashboard_login_url": "",
         "dashboard_host": "0.0.0.0",
         "dashboard_port": 8000,
     }
@@ -52,6 +54,8 @@ class Handler(SimpleHTTPRequestHandler):
         ]
         categories = payload.get("ticket_categories", [""])[0]
         config["ticket_categories"] = [c.strip() for c in categories.split(",") if c.strip()] or config["ticket_categories"]
+        config["dashboard_domain"] = payload.get("dashboard_domain", [config.get("dashboard_domain", "")])[0].strip()
+        config["dashboard_login_url"] = f'https://{config["dashboard_domain"]}' if config.get("dashboard_domain") else ""
 
         save_config(config)
         self.send_response(200)

@@ -56,6 +56,7 @@ def load_config():
         'ticket_categories': ['Техподдержка', 'Жалобы', 'Предложения', 'Другое'],
         'ticket_roles': [],
         'max_warns': 3,
+        'dashboard_domain': '',
         'custom_commands': []
     }
 
@@ -63,6 +64,20 @@ def load_config():
 def save_config(config):
     with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
+
+
+def prompt_dashboard_domain():
+    config = load_config()
+    current = config.get('dashboard_domain', '').strip()
+    prompt = 'Введите домен для сайта'
+    if current:
+        prompt += f' [{current}]'
+    prompt += ': '
+    domain = input(prompt).strip() or current
+    config['dashboard_domain'] = domain
+    config['dashboard_login_url'] = f'https://{domain}' if domain else ''
+    save_config(config)
+    return domain
 
 
 def dashboard_host_port():
@@ -832,7 +847,9 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir(BASE_DIR)
+    domain = prompt_dashboard_domain()
     host, port = dashboard_host_port()
     server = ThreadingHTTPServer((host, port), Handler)
-    print(f'Dashboard running on http://{host}:{port}')
+    display_host = domain or host
+    print(f'Dashboard running on http://{display_host}:{port}')
     server.serve_forever()
