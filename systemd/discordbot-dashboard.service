@@ -1,0 +1,51 @@
+[Unit]
+Description=DiscordSer Bot Dashboard - Web Management Panel
+After=network.target network-online.target discordbot.service
+Wants=network-online.target
+BindsTo=discordbot.service
+
+[Service]
+Type=simple
+User=discordbot
+Group=discordbot
+WorkingDirectory=/home/discordbot/bot-2.0-main
+
+# Python окружение
+Environment=PATH=/home/discordbot/bot-2.0-main/venv/bin
+Environment=PYTHONPATH=/home/discordbot/bot-2.0-main
+Environment=PYTHONUNBUFFERED=1
+
+# Команда запуска
+ExecStart=/home/discordbot/bot-2.0-main/venv/bin/python dashboard_server.py --no-prompt
+
+# Политики перезапуска
+Restart=always
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Таймауты
+TimeoutStartSec=30
+TimeoutStopSec=15
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=discordbot-dashboard
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/discordbot/bot-2.0-main
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Ресурсы
+MemoryLimit=256M
+CPUQuota=25%
+
+[Install]
+WantedBy=multi-user.target

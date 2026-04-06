@@ -6,8 +6,8 @@ def load_config():
     config_path = os.path.join(os.path.dirname(__file__), "config.json")
 
     if not os.path.exists(config_path):
-        print("❌ config.json не найден!")
-        print("📝 Запустите python setup.py для настройки бота")
+        print(">>> config.json не найден!")
+        print(">>> Запустите python setup.py для настройки бота")
         exit(1)
 
     with open(config_path, "r", encoding="utf-8") as f:

@@ -116,6 +116,27 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == '/api/bootstrap':
             self._send_json({'config': load_config()})
             return
+        if self.path == '/api/settings':
+            self._send_json({'settings': load_config()})
+            return
+        if self.path == '/api/mod-logs':
+            self._send_json({'logs': db_query('SELECT * FROM mod_logs ORDER BY id DESC LIMIT 100')})
+            return
+        if self.path == '/api/warns':
+            self._send_json({'warns': db_query('SELECT * FROM warns ORDER BY id DESC LIMIT 100')})
+            return
+        if self.path == '/api/custom-commands':
+            self._send_json({'commands': [
+                {'name': row[0], 'response': row[1], 'created_at': row[2]}
+                for row in database.get_custom_commands()
+            ]})
+            return
+        if self.path == '/api/custom-commands-list':
+            self._send_json({'commands': [
+                {'name': row[0], 'response': row[1], 'created_at': row[2]}
+                for row in database.get_custom_commands()
+            ]})
+            return
         if self.path == '/api/members':
             guild = live_guild()
             if not guild:
@@ -417,7 +438,6 @@ class Handler(SimpleHTTPRequestHandler):
             refresh_bot_commands()
             self._send_json({'ok': True})
             return
-        return super().do_GET()
         if self.path == '/api/mod-logs':
             self._send_json({'logs': db_query('SELECT * FROM mod_logs ORDER BY id DESC LIMIT 100')})
             return
@@ -428,8 +448,10 @@ class Handler(SimpleHTTPRequestHandler):
             self._send_json({'settings': load_config()})
             return
         if self.path == '/api/custom-commands':
-            commands = db_query('SELECT name, response, created_at FROM custom_commands ORDER BY name ASC')
-            self._send_json({'commands': commands})
+            self._send_json({'commands': [
+                {'name': row[0], 'response': row[1], 'created_at': row[2]}
+                for row in database.get_custom_commands()
+            ]})
             return
         return super().do_GET()
 
@@ -846,10 +868,41 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == '__main__':
+    import sys
     os.chdir(BASE_DIR)
-    domain = prompt_dashboard_domain()
-    host, port = dashboard_host_port()
-    server = ThreadingHTTPServer((host, port), Handler)
-    display_host = domain or host
-    print(f'Dashboard running on http://{display_host}:{port}')
-    server.serve_forever()
+
+    # Попробуем автоматически определить домен из конфига
+    config = load_config()
+    domain = config.get('dashboard_domain', '')
+
+    if '--no-prompt' in sys.argv or not sys.stdin.isatty():
+        # Запуск без интерактивного промпта
+        host, port = dashboard_host_port()
+
+        print(f"Starting dashboard server on {host}:{port}")
+        if domain:
+            print(f"Dashboard domain: {domain}")
+        else:
+            print("No dashboard domain configured. Using localhost.")
+
+        server = ThreadingHTTPServer((host, port), Handler)
+        display_host = domain or host
+        print(f'Dashboard running on http://{display_host}:{port}')
+        print("Press Ctrl+C to stop")
+
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped")
+    else:
+        # Оригинальное поведение с промптом
+        domain = prompt_dashboard_domain()
+        host, port = dashboard_host_port()
+        server = ThreadingHTTPServer((host, port), Handler)
+        display_host = domain or host
+        print(f'Dashboard running on http://{display_host}:{port}')
+
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped")

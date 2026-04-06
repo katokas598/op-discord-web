@@ -11,7 +11,7 @@ def setup():
 
     config = {}
 
-    print("📝 Введите данные для настройки:\n")
+    print(">>> [NOTE] Введите данные для настройки:\n")
 
     print("1. Discord бот:")
     config["discord_token"] = input("   Токен Discord бота: ").strip()
@@ -49,10 +49,10 @@ def setup():
         json.dump(config, f, ensure_ascii=False, indent=2)
 
     print("\n" + "=" * 50)
-    print("✅ Настройки сохранены в config.json")
+    print(">>> [OK] Настройки сохранены в config.json")
     print("=" * 50)
-    print("\n📝 Для запуска бота используйте: python main.py")
-    print("\n⚠️  Не забудьте добавить бота на сервер с нужными правами!")
+    print("\n>>> [NOTE] Для запуска бота используйте: python main.py")
+    print("\n>>> [WARNING]  Не забудьте добавить бота на сервер с нужными правами!")
 
     start_now = input("\nЗапустить бота сейчас? (y/n): ").strip().lower()
     if start_now == "y":

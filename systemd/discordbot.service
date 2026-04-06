@@ -1,0 +1,50 @@
+[Unit]
+Description=DiscordSer Bot - Discord Bot Service
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=discordbot
+Group=discordbot
+WorkingDirectory=/home/discordbot/bot-2.0-main
+
+# Python окружение
+Environment=PATH=/home/discordbot/bot-2.0-main/venv/bin
+Environment=PYTHONPATH=/home/discordbot/bot-2.0-main
+Environment=PYTHONUNBUFFERED=1
+
+# Команда запуска
+ExecStart=/home/discordbot/bot-2.0-main/venv/bin/python main.py
+
+# Политики перезапуска
+Restart=always
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Таймауты
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=discordbot
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/discordbot/bot-2.0-main
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Ресурсы
+MemoryLimit=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

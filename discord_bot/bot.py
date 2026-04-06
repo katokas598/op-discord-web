@@ -24,15 +24,15 @@ def sync_custom_commands():
 
 @bot.event
 async def on_ready():
-    print(f"✅ Discord бот запущен: {bot.user}")
-    print(f"📝 Префикс: {PREFIX}")
+    print(f">>> Discord бот запущен: {bot.user}")
+    print(f">>> Префикс: {PREFIX}")
 
     database.init_db()
     sync_custom_commands()
     bot_state.discord_bot = bot
-    print("✅ База данных инициализирована")
+    print(">>> База данных инициализирована")
 
-    config_path = os.path.join(os.path.dirname(__file__), "config.json")
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
     if os.path.exists(config_path):
         with open(config_path, "r", encoding="utf-8") as f:
             config = json.load(f)
@@ -79,7 +79,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         pass
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"❌ Отсутствует обязательный аргумент: `{error.param.name}`")
+        await ctx.send(f">>> Отсутствует обязательный аргумент: `{error.param.name}`")
     else:
         print(f"Error: {error}")
 
@@ -88,10 +88,10 @@ async def on_command_error(ctx, error):
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason=None):
     if member == ctx.author:
-        await ctx.send("❌ Вы не можете забанить себя!")
+        await ctx.send(">>> [ERROR] Вы не можете забанить себя!")
         return
     if member.top_role >= ctx.author.top_role:
-        await ctx.send("❌ Вы не можете забанить этого пользователя!")
+        await ctx.send(">>> [ERROR] Вы не можете забанить этого пользователя!")
         return
 
     await member.ban(reason=reason)
@@ -99,7 +99,7 @@ async def ban(ctx, member: discord.Member, *, reason=None):
         "ban", str(member.id), str(ctx.author.id), reason or "Не указано"
     )
 
-    embed = discord.Embed(title="✅ Пользователь забанен", color=discord.Color.red())
+    embed = discord.Embed(title=">>> [OK] Пользователь забанен", color=discord.Color.red())
     embed.add_field(name="Пользователь", value=member.mention)
     embed.add_field(name="Причина", value=reason or "Не указана")
     embed.add_field(name="Модератор", value=ctx.author.mention)
@@ -109,9 +109,9 @@ async def ban(ctx, member: discord.Member, *, reason=None):
 @ban.error
 async def ban_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
-        await ctx.send("❌ У вас нет прав для бана!")
+        await ctx.send(">>> [ERROR] У вас нет прав для бана!")
     elif isinstance(error, commands.MemberNotFound):
-        await ctx.send("❌ Пользователь не найден!")
+        await ctx.send(">>> [ERROR] Пользователь не найден!")
 
 
 @bot.command(name="unban")
@@ -123,23 +123,23 @@ async def unban(ctx, member_id: int):
         database.add_mod_log("unban", str(member_id), str(ctx.author.id))
 
         embed = discord.Embed(
-            title="✅ Пользователь разбанен", color=discord.Color.green()
+            title=">>> [OK] Пользователь разбанен", color=discord.Color.green()
         )
         embed.add_field(name="Пользователь", value=f"<@{member_id}>")
         embed.add_field(name="Модератор", value=ctx.author.mention)
         await ctx.send(embed=embed)
     except discord.NotFound:
-        await ctx.send("❌ Пользователь не найден в бане!")
+        await ctx.send(">>> [ERROR] Пользователь не найден в бане!")
 
 
 @bot.command(name="kick")
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason=None):
     if member == ctx.author:
-        await ctx.send("❌ Вы не можете кикнуть себя!")
+        await ctx.send(">>> [ERROR] Вы не можете кикнуть себя!")
         return
     if member.top_role >= ctx.author.top_role:
-        await ctx.send("❌ Вы не можете кикнуть этого пользователя!")
+        await ctx.send(">>> [ERROR] Вы не можете кикнуть этого пользователя!")
         return
 
     await member.kick(reason=reason)
@@ -147,7 +147,7 @@ async def kick(ctx, member: discord.Member, *, reason=None):
         "kick", str(member.id), str(ctx.author.id), reason or "Не указано"
     )
 
-    embed = discord.Embed(title="✅ Пользователь кикнут", color=discord.Color.orange())
+    embed = discord.Embed(title=">>> [OK] Пользователь кикнут", color=discord.Color.orange())
     embed.add_field(name="Пользователь", value=member.mention)
     embed.add_field(name="Причина", value=reason or "Не указана")
     embed.add_field(name="Модератор", value=ctx.author.mention)
@@ -157,10 +157,10 @@ async def kick(ctx, member: discord.Member, *, reason=None):
 @bot.command(name="mute")
 async def mute(ctx, member: discord.Member, time: str = None, *, reason=None):
     if member == ctx.author:
-        await ctx.send("❌ Вы не можете замутить себя!")
+        await ctx.send(">>> [ERROR] Вы не можете замутить себя!")
         return
     if member.top_role >= ctx.author.top_role:
-        await ctx.send("❌ Вы не можете замутить этого пользователя!")
+        await ctx.send(">>> [ERROR] Вы не можете замутить этого пользователя!")
         return
 
     mute_duration = None
@@ -175,7 +175,7 @@ async def mute(ctx, member: discord.Member, time: str = None, *, reason=None):
             else:
                 mute_duration = timedelta(minutes=int(time))
         except ValueError:
-            await ctx.send("❌ Неверный формат времени! Используйте: 10m, 1h, 1d")
+            await ctx.send(">>> [ERROR] Неверный формат времени! Используйте: 10m, 1h, 1d")
             return
 
     overwrites = discord.PermissionOverwrite(send_messages=False)
@@ -213,7 +213,7 @@ async def mute(ctx, member: discord.Member, time: str = None, *, reason=None):
     )
 
     duration_str = f"{time}" if time else "навсегда"
-    embed = discord.Embed(title="✅ Пользователь замучен", color=discord.Color.orange())
+    embed = discord.Embed(title=">>> [OK] Пользователь замучен", color=discord.Color.orange())
     embed.add_field(name="Пользователь", value=member.mention)
     embed.add_field(name="Длительность", value=duration_str)
     embed.add_field(name="Причина", value=reason or "Не указана")
@@ -248,7 +248,7 @@ async def unmute(ctx, member: discord.Member):
 
     database.add_mod_log("unmute", str(member.id), str(ctx.author.id))
 
-    embed = discord.Embed(title="✅ Пользователь размучен", color=discord.Color.green())
+    embed = discord.Embed(title=">>> [OK] Пользователь размучен", color=discord.Color.green())
     embed.add_field(name="Пользователь", value=member.mention)
     embed.add_field(name="Модератор", value=ctx.author.mention)
     embed.add_field(name="Каналов", value=f"{success} успешно, {failed} ошибок")
@@ -267,7 +267,7 @@ async def warn(ctx, member: discord.Member, *, reason=None):
 
     max_warns = 3
     try:
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
+        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
         if os.path.exists(config_path):
             with open(config_path, "r", encoding="utf-8") as f:
                 config = json.load(f)
@@ -281,13 +281,13 @@ async def warn(ctx, member: discord.Member, *, reason=None):
             "auto_ban", str(member.id), "SYSTEM", f"{max_warns} предупреждений"
         )
 
-        embed = discord.Embed(title="🔨 АВТОБАН!", color=discord.Color.red())
+        embed = discord.Embed(title="[AUTOBAN] АВТОБАН!", color=discord.Color.red())
         embed.add_field(name="Пользователь", value=member.mention)
         embed.add_field(name="Причина", value=f"{max_warns} предупреждений")
         embed.add_field(name="Последнее предупреждение", value=reason or "Не указано")
     else:
         embed = discord.Embed(
-            title="⚠️ Предупреждение выдано", color=discord.Color.yellow()
+            title=">>> [WARNING] Предупреждение выдано", color=discord.Color.yellow()
         )
         embed.add_field(name="Пользователь", value=member.mention)
         embed.add_field(name="Причина", value=reason or "Не указана")
@@ -303,7 +303,7 @@ async def clearwarns(ctx, member: discord.Member):
     database.add_mod_log("clear_warns", str(member.id), str(ctx.author.id))
 
     embed = discord.Embed(
-        title="✅ Предупреждения очищены", color=discord.Color.green()
+        title=">>> [OK] Предупреждения очищены", color=discord.Color.green()
     )
     embed.add_field(name="Пользователь", value=member.mention)
     embed.add_field(name="Удалено", value=f"{count} предупреждений")
@@ -341,11 +341,11 @@ async def warns(ctx, member: discord.Member = None):
 @commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount: int):
     if amount < 1 or amount > 1000:
-        await ctx.send("❌ Количество должно быть от 1 до 1000!")
+        await ctx.send(">>> [ERROR] Количество должно быть от 1 до 1000!")
         return
 
     deleted = await ctx.channel.purge(limit=amount + 1)
-    embed = discord.Embed(title="✅ Сообщения удалены", color=discord.Color.green())
+    embed = discord.Embed(title=">>> [OK] Сообщения удалены", color=discord.Color.green())
     embed.add_field(name="Удалено", value=f"{len(deleted)} сообщений")
     embed.add_field(name="Канал", value=ctx.channel.mention)
     embed.add_field(name="Модератор", value=ctx.author.mention)
@@ -356,7 +356,7 @@ async def clear(ctx, amount: int):
 @commands.has_permissions(manage_channels=True)
 async def lock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
-    embed = discord.Embed(title="🔒 Канал заблокирован", color=discord.Color.red())
+    embed = discord.Embed(title="[LOCKED] Канал заблокирован", color=discord.Color.red())
     embed.add_field(name="Канал", value=ctx.channel.mention)
     embed.add_field(name="Модератор", value=ctx.author.mention)
     await ctx.send(embed=embed)
@@ -366,7 +366,7 @@ async def lock(ctx):
 @commands.has_permissions(manage_channels=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=None)
-    embed = discord.Embed(title="🔓 Канал разблокирован", color=discord.Color.green())
+    embed = discord.Embed(title="[UNLOCKED] Канал разблокирован", color=discord.Color.green())
     embed.add_field(name="Канал", value=ctx.channel.mention)
     embed.add_field(name="Модератор", value=ctx.author.mention)
     await ctx.send(embed=embed)
@@ -374,7 +374,7 @@ async def unlock(ctx):
 
 @bot.command(name="cmds")
 async def help_command(ctx):
-    embed = discord.Embed(title="📚 Список команд", color=discord.Color.blue())
+    embed = discord.Embed(title="[COMMANDS] Список команд", color=discord.Color.blue())
 
     embed.add_field(
         name="Основные команды",
@@ -413,7 +413,7 @@ async def help_command(ctx):
 @bot.command(name="ping")
 async def ping(ctx):
     latency = round(bot.latency * 1000)
-    embed = discord.Embed(title="🏓 Pong!", color=discord.Color.green())
+    embed = discord.Embed(title="[PING] Pong!", color=discord.Color.green())
     embed.add_field(name="Задержка", value=f"{latency} мс")
     await ctx.send(embed=embed)
 
@@ -423,7 +423,7 @@ async def serverinfo(ctx):
     guild = ctx.guild
 
     embed = discord.Embed(
-        title=f"📊 Информация о сервере: {guild.name}", color=discord.Color.blue()
+        title=f"[INFO] Информация о сервере: {guild.name}", color=discord.Color.blue()
     )
     embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
 
@@ -445,7 +445,7 @@ async def userinfo(ctx, member: discord.Member = None):
     roles_str = ", ".join(roles) if roles else "Нет"
 
     embed = discord.Embed(
-        title=f"👤 Информация о пользователе: {member.name}", color=member.color
+        title=f"[USER] Информация о пользователе: {member.name}", color=member.color
     )
     embed.set_thumbnail(url=member.avatar.url if member.avatar else None)
 
@@ -466,7 +466,7 @@ async def userinfo(ctx, member: discord.Member = None):
 @bot.command(name="invite")
 async def invite(ctx):
     invite_link = await ctx.channel.create_invite(max_age=86400, max_uses=100)
-    embed = discord.Embed(title="🔗 Приглашение на сервер", color=discord.Color.green())
+    embed = discord.Embed(title="[LINK] Приглашение на сервер", color=discord.Color.green())
     embed.add_field(name="Ссылка", value=invite_link)
     await ctx.send(embed=embed)
 
@@ -481,23 +481,23 @@ async def ticket_command(ctx, category: str = None):
 
     if category and category not in categories:
         await ctx.send(
-            f"❌ Неизвестная категория. Доступные: {', '.join(categories)}",
+            f">>> [ERROR] Неизвестная категория. Доступные: {', '.join(categories)}",
             delete_after=10,
         )
         return
 
     guild = ctx.guild
-    category_obj = discord.utils.get(guild.categories, name="🎫 Тикеты")
+    category_obj = discord.utils.get(guild.categories, name="[TICKET] Тикеты")
 
     if not category_obj:
-        category_obj = await guild.create_category("🎫 Тикеты")
+        category_obj = await guild.create_category("[TICKET] Тикеты")
 
     overwrites = {
         guild.default_role: discord.PermissionOverwrite(read_messages=False),
         ctx.author: discord.PermissionOverwrite(read_messages=True, send_messages=True),
     }
 
-    config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.json")
     if os.path.exists(config_path):
         with open(config_path, "r", encoding="utf-8") as f:
             config = json.load(f)
@@ -513,7 +513,7 @@ async def ticket_command(ctx, category: str = None):
     existing = discord.utils.get(guild.channels, name=channel_name)
 
     if existing:
-        await ctx.send("❌ У вас уже есть открытый тикет!", delete_after=10)
+        await ctx.send(">>> [ERROR] У вас уже есть открытый тикет!", delete_after=10)
         return
 
     channel = await guild.create_text_channel(
@@ -526,7 +526,7 @@ async def ticket_command(ctx, category: str = None):
     )
 
     embed = discord.Embed(
-        title=f"🎫 Тикет #{ticket_id}",
+        title=f"[TICKET] Тикет #{ticket_id}",
         description=f"Категория: **{ticket_category}**\n\nОпишите вашу проблему. Модератор скоро ответит.",
         color=discord.Color.blue(),
     )
@@ -534,7 +534,7 @@ async def ticket_command(ctx, category: str = None):
 
     await channel.send(embed=embed)
 
-    await ctx.send(f"✅ Тикет создан: {channel.mention}", delete_after=10)
+    await ctx.send(f">>> [OK] Тикет создан: {channel.mention}", delete_after=10)
 
 
 @bot.command(name="closeticket")
@@ -543,16 +543,16 @@ async def closeticket(ctx):
     ticket = database.get_ticket_by_channel(str(ctx.channel.id))
 
     if not ticket:
-        await ctx.send("❌ Это не тикет канал!")
+        await ctx.send(">>> [ERROR] Это не тикет канал!")
         return
 
-    await ctx.send("🔒 Тикет будет закрыт через 5 секунд...")
+    await ctx.send("[LOCKED] Тикет будет закрыт через 5 секунд...")
     await asyncio.sleep(5)
 
     database.close_ticket(str(ctx.channel.id))
 
     embed = discord.Embed(
-        title="✅ Тикет закрыт",
+        title=">>> [OK] Тикет закрыт",
         description="Спасибо за обращение!",
         color=discord.Color.green(),
     )
